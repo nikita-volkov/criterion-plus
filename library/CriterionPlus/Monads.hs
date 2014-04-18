@@ -52,12 +52,14 @@ benchmark b = do
       reportsDir = 
         fmap FS.decodeString $ O.strOption $ 
           O.long "reportsDir" <>
+          O.short 'd' <>
           O.value "." <>
           O.showDefault <>
           O.help "A path to directory to save all the reports in"
       samplesAmount = 
         O.option $ 
           O.long "samplesAmount" <>
+          O.short 's' <>
           O.value 100 <>
           O.showDefault <>
           O.help "How many times to sample the benchmarks"
