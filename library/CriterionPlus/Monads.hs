@@ -142,7 +142,15 @@ subject name subj = Standoff $ do
 -- A monad, which wraps the benchmarking subject and controls its measurement.
 newtype Subject a = 
   Subject (StateT SampleStartTime (StateT SampleTotalTime IO) a)
-  deriving (Functor, Applicative, Monad, MonadIO)
+  deriving (Functor, Applicative, Monad, MonadIO, MonadBase IO)
+
+instance MonadBaseControl IO Subject where
+  newtype StM Subject a = SubjectStM (StM (StateT SampleStartTime (StateT SampleTotalTime IO)) a)
+  liftBaseWith run =
+    Subject $ liftBaseWith $ \runStateInBase -> 
+    run $ \(Subject s) -> liftM SubjectStM $ runStateInBase s
+  restoreM (SubjectStM s) = Subject $ restoreM s
+
 
 type SubjectReport = (Name, S.Sample, C.SampleAnalysis, C.Outliers)
 
