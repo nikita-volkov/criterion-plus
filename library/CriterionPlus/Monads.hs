@@ -202,14 +202,13 @@ runSubject name group env settings subj = do
 
       putStrLnLT $ [lt|Collecting %d samples in estimated %s|] amount (C.secs estTime)
       
-      let printCounter = estTime > 0.5
-          useFirstSample = firstSample > 0.2
+      let useFirstSample = firstSample > 0.2
       do
         vec <- VM.new amount
         when useFirstSample $ VM.write vec 0 firstSample
-        when printCounter $ putStrLn ""
+        putStrLn ""
         forM_ (enumFromTo (if useFirstSample then 1 else 0) (amount - 1)) $ \i -> do
-          when printCounter $ putStrLnLT $ 
+          putStrLnLT $ 
             [lt|%sCollecting sample %d of %d|] (CSI.cursorUp 1 :: LazyText) (i+1) (amount)
           VM.write vec i =<< runSample
         V.unsafeFreeze vec
