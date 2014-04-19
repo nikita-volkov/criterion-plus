@@ -63,8 +63,13 @@ benchmark b = do
           O.long "samplesAmount" <>
           O.short 's' <>
           O.value 100 <>
+          O.eitherReader (validateValue . read) <>
           O.showDefault <>
           O.help "How many times to sample the benchmarks"
+        where
+          validateValue a = if a < 3 
+            then Left "A value is lower than the minimum of 3"
+            else Right a
 
 
 -- * Benchmark
