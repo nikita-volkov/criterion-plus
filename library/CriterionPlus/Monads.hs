@@ -21,6 +21,7 @@ import qualified Data.Vector.Unboxed.Mutable as VM
 import qualified Filesystem.Path.CurrentOS as FS
 import qualified Options.Applicative as O
 import qualified CriterionPlus.CSI as CSI
+import qualified System.IO
 
 
 -- * Shared Types
@@ -197,22 +198,22 @@ runSubject name group env settings subj = do
     collectSamplesVec = do
       let amount = samplesAmount settings
       firstSample <- runSample
-      let estTime = firstSample * fromIntegral amount
-
-
-      putStrLnLT $ [lt|Collecting %d samples in estimated %s|] amount (C.secs estTime)
-      
       let useFirstSample = firstSample > 0.2
-      do
-        vec <- VM.new amount
-        when useFirstSample $ VM.write vec 0 firstSample
-        putStrLn ""
-        forM_ (enumFromTo (if useFirstSample then 1 else 0) (amount - 1)) $ \i -> do
-          putStrLnLT $ 
-            [lt|%sCollecting sample %d of %d|] (CSI.cursorUp 1 :: LazyText) (i+1) (amount)
-          VM.write vec i =<< runSample
-        V.unsafeFreeze vec
+      vec <- VM.new amount
+      when useFirstSample $ VM.write vec 0 firstSample
+      forM_ (enumFromTo (if useFirstSample then 1 else 0) (amount - 1)) $ \i -> do
+        printTimeLeft firstSample (amount - i)
+        sample <- runSample
+        VM.write vec i sample
+      V.unsafeFreeze vec
       where
+        printTimeLeft sample amount = do
+          putStrST $ 
+            [st|Collecting %d more samples in %.1f s.|] 
+              (amount) 
+              (sample * fromIntegral amount)
+          System.IO.hFlush System.IO.stdout
+          putStr (CSI.eraseLineToBeginning <> CSI.cursorHorizontalAbsolute 0)
         runSample = do
           performGC
           (_, time) <- 
