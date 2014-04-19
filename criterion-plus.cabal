@@ -53,6 +53,7 @@ library
     CriterionPlus.Prelude.Data
     CriterionPlus.Prelude.Transformers
     CriterionPlus.Monads
+    CriterionPlus.CSI
   exposed-modules:
     CriterionPlus
   build-depends:

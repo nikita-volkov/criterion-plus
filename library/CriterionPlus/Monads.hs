@@ -20,6 +20,7 @@ import qualified Data.Vector.Unboxed as V
 import qualified Data.Vector.Unboxed.Mutable as VM
 import qualified Filesystem.Path.CurrentOS as FS
 import qualified Options.Applicative as O
+import qualified CriterionPlus.CSI as CSI
 
 
 -- * Shared Types
@@ -161,7 +162,7 @@ type SampleTotalTime = Double
 
 runSubject :: Name -> Group -> Environment -> Settings -> Subject a -> IO SubjectReport
 runSubject name group env settings subj = do
-  putStrLnLT $ [lt|Running a subject "%s"|] compositeName
+  putStrLnLT $ [lt|\nRunning a subject "%s"|] compositeName
 
   samplesVec <- collectSamplesVec
 
@@ -173,8 +174,6 @@ runSubject name group env settings subj = do
   let outliers = C.classifyOutliers samplesVec
   reportOutliers outliers
   reportOutliersVariance anOutlierVar 
-
-  putStrLn ""
 
   return $ (compositeName, samplesVec, analysis, outliers)
   where
@@ -199,16 +198,21 @@ runSubject name group env settings subj = do
       let amount = samplesAmount settings
       firstSample <- runSample
       let estTime = firstSample * fromIntegral amount
-      when (estTime > 0.5) $ 
-        putStrLnLT $ [lt|Collecting %d samples in estimated %s|] amount (C.secs estTime)
-      if firstSample < 0.5
-        then V.replicateM amount runSample
-        else do      
-          vec <- VM.new amount
-          VM.write vec 0 firstSample
-          forM_ (enumFromTo 1 (amount - 1)) $ \i -> do
-            VM.write vec i =<< runSample
-          V.unsafeFreeze vec
+
+
+      putStrLnLT $ [lt|Collecting %d samples in estimated %s|] amount (C.secs estTime)
+      
+      let printCounter = estTime > 0.5
+          useFirstSample = firstSample > 0.2
+      do
+        vec <- VM.new amount
+        when useFirstSample $ VM.write vec 0 firstSample
+        when printCounter $ putStrLn ""
+        forM_ (enumFromTo (if useFirstSample then 1 else 0) (amount - 1)) $ \i -> do
+          when printCounter $ putStrLnLT $ 
+            [lt|%sCollecting sample %d of %d|] (CSI.cursorUp 1 :: LazyText) (i+1) (amount)
+          VM.write vec i =<< runSample
+        V.unsafeFreeze vec
       where
         runSample = do
           performGC
