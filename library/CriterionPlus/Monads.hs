@@ -19,6 +19,7 @@ import qualified Data.Text as T
 import qualified Data.Vector.Unboxed as V
 import qualified Data.Vector.Unboxed.Mutable as VM
 import qualified Filesystem.Path.CurrentOS as FS
+import qualified Filesystem as FS
 import qualified Options.Applicative as O
 import qualified CriterionPlus.CSI as CSI
 import qualified System.IO
@@ -52,12 +53,19 @@ benchmark b = do
   where
     parser = Settings <$> reportsDir <*> samplesAmount where
       reportsDir = 
-        fmap FS.decodeString $ O.strOption $ 
+        O.nullOption $ 
+          O.eitherReader readValue <>
           O.long "reportsDir" <>
           O.short 'd' <>
           O.value "." <>
           O.showDefault <>
           O.help "A path to directory to save all the reports in"
+        where
+          readValue s = let
+            p = FS.decodeString s
+            in if unsafePerformIO (FS.isDirectory p)
+              then Right p
+              else Left $ "The path does not exist or is not a directory: " <> s
       samplesAmount = 
         O.option $ 
           O.long "samplesAmount" <>
