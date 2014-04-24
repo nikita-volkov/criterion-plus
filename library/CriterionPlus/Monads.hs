@@ -45,7 +45,6 @@ type Environment = C.Environment
 -- |
 -- Parse the command line options and run the benchmark.
 -- 
--- This function is supposed to be used 
 benchmark :: Benchmark () -> IO ()
 benchmark b = do
   settings <- O.execParser $ O.info (O.helper <*> parser) $ O.fullDesc
