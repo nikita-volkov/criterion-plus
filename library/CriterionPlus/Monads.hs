@@ -266,26 +266,26 @@ pause = Subject $ do
 
 -- |
 -- An adaptation of @Criterion.Types.'C.whnf'@.
-whnf :: (a -> b) -> a -> Subject ()
+whnf :: (MonadIO m) => (a -> b) -> a -> m ()
 whnf f x = liftIO $ void $ evaluate (f x)
 {-# NOINLINE whnf #-}
 
 -- |
 -- An adaptation of @Criterion.Types.'C.nf'@.
-nf :: NFData b => (a -> b) -> a -> Subject ()
+nf :: (MonadIO m, NFData b) => (a -> b) -> a -> m ()
 nf f x = liftIO $ evaluate (rnf (f x))
 {-# NOINLINE nf #-}
 
 -- |
 -- An adaptation of @Criterion.Types.'C.nfIO'@.
-nfIO :: (NFData a) => IO a -> Subject ()
-nfIO = Subject . liftIO . C.nfIO
+nfIO :: (MonadIO m, NFData a) => IO a -> m ()
+nfIO = liftIO . C.nfIO
 {-# NOINLINE nfIO #-}
 
 -- |
 -- An adaptation of @Criterion.Types.'C.whnfIO'@.
-whnfIO :: IO a -> Subject ()
-whnfIO = Subject . liftIO . C.whnfIO
+whnfIO :: (MonadIO m) => IO a -> m ()
+whnfIO = liftIO . C.whnfIO
 {-# NOINLINE whnfIO #-}
 
 
