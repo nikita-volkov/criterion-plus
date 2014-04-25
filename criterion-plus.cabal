@@ -143,6 +143,7 @@ test-suite internal-tests
     statistics == 0.10.*,
     -- file-system:
     system-filepath == 0.4.*,
+    system-fileio == 0.3.*,
     -- data:
     vector > 0.7 && < 0.11,
     text,
