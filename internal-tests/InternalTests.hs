@@ -15,21 +15,21 @@ main = htfMain $ htf_thisModulesTests
 -------------------------
 
 test_aMoreComplexPureBenchmarkTakesLonger = do
-  replicateM_ 20 $ do
-    [a, b] <- runStandoff 20 $ do
+  replicateM_ 10 $ do
+    [a, b] <- runStandoff 100 $ do
       M.subject "shorter" $ do
         M.nf pureCalc 1
       M.subject "longer" $ do
-        M.nf pureCalc 3
+        M.nf pureCalc 4
     assertEqual LT $ compareResults a b
 
 test_aMoreComplexImpureBenchmarkTakesLonger = do
-  replicateM_ 20 $ do
-    [a, b] <- runStandoff 20 $ do
+  replicateM_ 10 $ do
+    [a, b] <- runStandoff 100 $ do
       M.subject "shorter" $ do
         M.nfIO $ return $ pureCalc 1
       M.subject "longer" $ do
-        M.nfIO $ return $ pureCalc 3
+        M.nfIO $ return $ pureCalc 4
     assertEqual LT $ compareResults a b
 
 test_timerControlsDontAffectTheResults = unitTestPending ""
