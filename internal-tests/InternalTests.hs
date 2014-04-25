@@ -20,7 +20,7 @@ test_aMoreComplexPureBenchmarkTakesLonger = do
       M.subject "shorter" $ do
         M.nf pureCalc 1
       M.subject "longer" $ do
-        M.nf pureCalc 2
+        M.nf pureCalc 3
     assertEqual LT $ compareResults a b
 
 test_aMoreComplexImpureBenchmarkTakesLonger = do
@@ -29,7 +29,7 @@ test_aMoreComplexImpureBenchmarkTakesLonger = do
       M.subject "shorter" $ do
         M.nfIO $ return $ pureCalc 1
       M.subject "longer" $ do
-        M.nfIO $ return $ pureCalc 2
+        M.nfIO $ return $ pureCalc 3
     assertEqual LT $ compareResults a b
 
 test_timerControlsDontAffectTheResults = unitTestPending ""
