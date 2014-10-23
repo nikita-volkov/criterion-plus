@@ -1,7 +1,7 @@
 name:
   criterion-plus
 version:
-  0.1.0
+  0.1.1
 synopsis:
   Enhancement of the "criterion" benchmarking library
 description:
@@ -58,7 +58,7 @@ library
     CriterionPlus
   build-depends:
     -- options:
-    optparse-applicative == 0.8.*,
+    optparse-applicative >= 0.8 && < 0.10,
     -- criterion:
     criterion == 0.8.*,
     statistics == 0.10.*,
@@ -135,9 +135,9 @@ test-suite internal-tests
     -- testing:
     QuickCheck,
     HUnit,
-    HTF == 0.11.*,
+    HTF == 0.12.*,
     -- options:
-    optparse-applicative == 0.8.*,
+    optparse-applicative >= 0.8 && < 0.10,
     -- criterion:
     criterion == 0.8.*,
     statistics == 0.10.*,
