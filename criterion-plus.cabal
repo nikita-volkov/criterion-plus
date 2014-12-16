@@ -1,7 +1,7 @@
 name:
   criterion-plus
 version:
-  0.1.1
+  0.1.2
 synopsis:
   Enhancement of the "criterion" benchmarking library
 description:
@@ -61,7 +61,7 @@ library
     optparse-applicative >= 0.8 && < 0.10,
     -- criterion:
     criterion == 0.8.*,
-    statistics == 0.10.*,
+    statistics >= 0.10 && < 0.14,
     -- file-system:
     system-filepath == 0.4.*,
     system-fileio == 0.3.*,
@@ -140,7 +140,7 @@ test-suite internal-tests
     optparse-applicative >= 0.8 && < 0.10,
     -- criterion:
     criterion == 0.8.*,
-    statistics == 0.10.*,
+    statistics >= 0.10 && < 0.14,
     -- file-system:
     system-filepath == 0.4.*,
     system-fileio == 0.3.*,
