@@ -1,3 +1,4 @@
+{-# LANGUAGE UndecidableInstances #-}
 -- |
 -- Builder monads.
 module CriterionPlus.Monads where
@@ -161,11 +162,11 @@ newtype Subject a =
   deriving (Functor, Applicative, Monad, MonadIO, MonadBase IO)
 
 instance MonadBaseControl IO Subject where
-  newtype StM Subject a = SubjectStM (StM (StateT SampleStartTime (StateT SampleTotalTime IO)) a)
+  type StM Subject a = StM (StateT SampleStartTime (StateT SampleTotalTime IO)) a
   liftBaseWith run =
     Subject $ liftBaseWith $ \runStateInBase -> 
-    run $ \(Subject s) -> liftM SubjectStM $ runStateInBase s
-  restoreM (SubjectStM s) = Subject $ restoreM s
+    run $ \(Subject s) -> runStateInBase s
+  restoreM s = Subject $ restoreM s
 
 
 type SubjectReport = (Name, S.Sample, C.SampleAnalysis, C.Outliers)
