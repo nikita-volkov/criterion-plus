@@ -30,19 +30,15 @@ install:
       constraint_options=(
       );
     fi;
-  # Special case get 0.8.1.0 criterion
-  - git clone https://github.com/bos/criterion.git
-  - cd criterion
-  - git checkout 0.8.1.0
-  - cd ..
-  # Add checked out criterion into sandbox
-  - cabal sandbox init
-  - cabal sandbox add-source criterion
+  # Install the "haskell-src-exts" implicit dependency
+  - cabal install -j ${constraint_options[@]} happy
   # Install the library dependencies
+  # with a workaround for the outdated "criterion" dependency
   - cabal install --only-dependencies --reorder-goals --force-reinstalls
       ${constraint_options[@]}
       $([ "$tests" = "1" ] && echo "--enable-tests")
       $([ "$benchmarks" = "1" ] && echo "--enable-benchmarks")
+      --allow-newer=base
   # Build the library
   - cabal build
   # Configure and build the remaining stuff

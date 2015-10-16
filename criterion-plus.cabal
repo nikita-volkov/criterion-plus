@@ -135,7 +135,7 @@ test-suite internal-tests
     -- testing:
     QuickCheck,
     HUnit,
-    HTF == 0.12.*,
+    HTF == 0.13.*,
     -- options:
     optparse-applicative >= 0.12 && < 0.13,
     -- criterion:
