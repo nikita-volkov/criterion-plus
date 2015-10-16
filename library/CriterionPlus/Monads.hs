@@ -53,8 +53,7 @@ benchmark b = do
   where
     parser = Settings <$> reportsDir <*> samplesAmount where
       reportsDir = 
-        O.nullOption $ 
-          O.eitherReader readValue <>
+        O.option (O.eitherReader readValue) $
           O.long "reportsDir" <>
           O.short 'd' <>
           O.value "." <>
@@ -67,11 +66,10 @@ benchmark b = do
               then Right p
               else Left $ "The path does not exist or is not a directory: " <> s
       samplesAmount = 
-        O.option $ 
+        O.option (O.eitherReader (validateValue . read)) $
           O.long "samplesAmount" <>
           O.short 's' <>
           O.value 100 <>
-          O.eitherReader (validateValue . read) <>
           O.showDefault <>
           O.help "How many times to sample the benchmarks"
         where
