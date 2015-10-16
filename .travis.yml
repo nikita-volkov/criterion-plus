@@ -16,14 +16,6 @@ install:
     export PATH=/opt/ghc/$ghc/bin:/opt/cabal/$cabal/bin:$PATH;
   # Update the Cabal database
   - cabal update
-  # Special case get 0.8.1.0 criterion
-  - git clone https://github.com/bos/criterion.git
-  - cd criterion
-  - git checkout 0.8.1.0
-  - cd ..
-  # Add checked out criterion into sandbox
-  - cabal sandbox init
-  - cabal sandbox add-source criterion
   # Switch to the distro:
   - 
     export pkg_name=$(cabal info . | awk '{print $2;exit}');
@@ -38,6 +30,14 @@ install:
       constraint_options=(
       );
     fi;
+  # Special case get 0.8.1.0 criterion
+  - git clone https://github.com/bos/criterion.git
+  - cd criterion
+  - git checkout 0.8.1.0
+  - cd ..
+  # Add checked out criterion into sandbox
+  - cabal sandbox init
+  - cabal sandbox add-source criterion
   # Install the library dependencies
   - cabal install --only-dependencies --reorder-goals --force-reinstalls
       ${constraint_options[@]}
